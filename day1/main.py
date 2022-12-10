@@ -1,5 +1,3 @@
-from pprint import pprint
-
 def main():
     with open('input.txt', encoding='utf-8') as file:
         elf_inventories = file.read().split("\n\n")

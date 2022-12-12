@@ -53,3 +53,12 @@ def first(iterable, default=False, pred=None):
     # first_true([a,b,c], x) --> a or b or c or x
     # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
     return next(filter(pred, iterable), default)
+
+
+def takewhile_inclusive(predicate, iterable):
+    # takewhile(lambda x: x<5, [1,4,6,4,1]) --> 1 4
+    for x in iterable:
+        yield x
+
+        if not predicate(x):
+            break

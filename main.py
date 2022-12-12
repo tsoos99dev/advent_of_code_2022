@@ -2,7 +2,7 @@ from calendar.calendar import Calendar
 
 
 def main():
-    solution = Calendar.get(day=7)
+    solution = Calendar.get(day=8)
 
     print(solution.part1())
     print(solution.part2())

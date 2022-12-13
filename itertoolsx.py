@@ -1,5 +1,8 @@
 import collections
-from itertools import islice, takewhile, groupby, pairwise, chain
+from itertools import islice, takewhile, groupby, pairwise, chain, repeat
+from typing import TypeVar, Callable, Iterable
+
+_T = TypeVar('_T')
 
 
 def batched(iterable, n):
@@ -79,3 +82,32 @@ def tail(n, iterable):
 def flatten(list_of_lists):
     "Flatten one level of nesting"
     return chain.from_iterable(list_of_lists)
+
+
+def iter_except(func: Callable[[], _T], exception: type[Exception], first=None) -> Iterable[_T]:
+    """ Call a function repeatedly until an exception is raised.
+
+    Converts a call-until-exception interface to an iterator interface.
+    Like builtins.iter(func, sentinel) but uses an exception instead
+    of a sentinel to end the loop.
+
+    Examples:
+        iter_except(functools.partial(heappop, h), IndexError)   # priority queue iterator
+        iter_except(d.popitem, KeyError)                         # non-blocking dict iterator
+        iter_except(d.popleft, IndexError)                       # non-blocking deque iterator
+        iter_except(q.get_nowait, Queue.Empty)                   # loop over a producer Queue
+        iter_except(s.pop, KeyError)                             # non-blocking set iterator
+
+    """
+    try:
+        if first is not None:
+            yield first()            # For database APIs needing an initial cast to db.first()
+        while True:
+            yield func()
+    except exception:
+        pass
+
+
+def ncycles(iterable, n):
+    "Returns the sequence elements n times"
+    return chain.from_iterable(repeat(tuple(iterable), n))

@@ -4,7 +4,7 @@ from calendar.calendar import Calendar
 
 
 def main():
-    solution = Calendar.get(day=12)
+    solution = Calendar.get(day=13)
 
     print(solution.part1())
     print(solution.part2())

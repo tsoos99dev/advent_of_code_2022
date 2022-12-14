@@ -111,3 +111,24 @@ def iter_except(func: Callable[[], _T], exception: type[Exception], first=None) 
 def ncycles(iterable, n):
     "Returns the sequence elements n times"
     return chain.from_iterable(repeat(tuple(iterable), n))
+
+
+def iter_index(iterable, value, start=0):
+    "Return indices where a value occurs in a sequence or iterable."
+    # iter_index('AABCADEAF', 'A') --> 0 1 4 7
+    try:
+        seq_index = iterable.index
+    except AttributeError:
+        # Slow path for general iterables
+        it = islice(iterable, start, None)
+        for i, element in enumerate(it, start):
+            if element is value or element == value:
+                yield i
+    else:
+        # Fast path for sequences
+        i = start - 1
+        try:
+            while True:
+                yield (i := seq_index(value, i+1))
+        except ValueError:
+            pass

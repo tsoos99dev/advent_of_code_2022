@@ -1,34 +1,11 @@
-import math
-import operator
-from dataclasses import dataclass, field, astuple
-from functools import partial
-from itertools import islice, takewhile, count, accumulate, chain, pairwise, starmap, repeat, zip_longest
-from pprint import pprint
-from typing import Protocol, Callable, Optional, Iterable
+from dataclasses import dataclass
+from dataclasses import dataclass
+from itertools import islice, accumulate, chain, repeat
+from typing import Iterable
 
 from calendar.calendar import Calendar
-from itertoolsx import takewhile_inclusive, prepend, tail, flatten
-
-
-@dataclass(frozen=True)
-class Vector:
-    x: int
-    y: int
-
-    def __add__(self, other):
-        return Vector(self.x + other.x, self.y + other.y)
-
-    def __sub__(self, other):
-        return Vector(self.x - other.x, self.y - other.y)
-
-    def __mul__(self, scalar):
-        return Vector(scalar * self.x, scalar * self.y)
-
-    def __rmul__(self, scalar):
-        return self.__mul__(scalar)
-
-    def __iter__(self):
-        return iter(astuple(self))
+from itertoolsx import tail, flatten
+from mathx import Vector
 
 
 @Calendar.register(day=9)

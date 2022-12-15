@@ -4,7 +4,7 @@ from collections import deque
 from dataclasses import dataclass
 from functools import cmp_to_key, reduce
 from itertools import chain, starmap
-from typing import Iterable, Optional
+from typing import Iterable
 
 from calendar.calendar import Calendar
 from itertoolsx import isplit, iter_except, first, iter_index, flatten, prepend

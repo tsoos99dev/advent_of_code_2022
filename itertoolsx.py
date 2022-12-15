@@ -1,6 +1,6 @@
 import collections
-from itertools import islice, takewhile, groupby, pairwise, chain, repeat
-from typing import TypeVar, Callable, Iterable
+from itertools import islice, takewhile, groupby, pairwise, chain, repeat, starmap
+from typing import TypeVar, Callable, Iterable, Type
 
 _T = TypeVar('_T')
 
@@ -79,12 +79,12 @@ def tail(n, iterable):
     return iter(collections.deque(iterable, maxlen=n))
 
 
-def flatten(list_of_lists):
+def flatten(list_of_lists: Iterable[Iterable[_T]]) -> Iterable[_T]:
     "Flatten one level of nesting"
     return chain.from_iterable(list_of_lists)
 
 
-def iter_except(func: Callable[[], _T], exception: type[Exception], first=None) -> Iterable[_T]:
+def iter_except(func: Callable[[], _T], exception: Type[Exception], first=None) -> Iterable[_T]:
     """ Call a function repeatedly until an exception is raised.
 
     Converts a call-until-exception interface to an iterator interface.
@@ -132,3 +132,13 @@ def iter_index(iterable, value, start=0):
                 yield (i := seq_index(value, i+1))
         except ValueError:
             pass
+
+
+def repeatfunc(func, times=None, *args):
+    """Repeat calls to func with specified arguments.
+
+    Example:  repeatfunc(random.random)
+    """
+    if times is None:
+        return starmap(func, repeat(args))
+    return starmap(func, repeat(args, times))

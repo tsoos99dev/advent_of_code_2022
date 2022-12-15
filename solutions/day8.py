@@ -1,6 +1,5 @@
-from dataclasses import dataclass, field
-from itertools import islice, takewhile, count
-from typing import Protocol, Callable, Optional, Iterable
+from dataclasses import dataclass
+from itertools import islice
 
 from calendar.calendar import Calendar
 from itertoolsx import takewhile_inclusive

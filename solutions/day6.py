@@ -1,9 +1,7 @@
 from dataclasses import dataclass
-from itertools import islice, dropwhile, compress
-from collections import deque
 
 from calendar.calendar import Calendar
-from itertoolsx import isplit, batched, window, first
+from itertoolsx import window, first
 
 
 @Calendar.register(day=6)

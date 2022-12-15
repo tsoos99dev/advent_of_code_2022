@@ -1,10 +1,8 @@
-from pprint import pprint
-
 from calendar.calendar import Calendar
 
 
 def main():
-    solution = Calendar.get(day=13)
+    solution = Calendar.get(day=14)
 
     print(solution.part1())
     print(solution.part2())

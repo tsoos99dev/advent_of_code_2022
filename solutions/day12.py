@@ -1,6 +1,4 @@
-from dataclasses import dataclass, field
-from functools import partial
-from typing import Callable, Iterable
+from dataclasses import dataclass
 
 from calendar.calendar import Calendar
 from search import a_star, PathNotFoundError

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from itertools import islice, dropwhile, compress
+from itertools import dropwhile, compress
 from collections import deque
 
 from calendar.calendar import Calendar

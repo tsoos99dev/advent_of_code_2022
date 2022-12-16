@@ -71,10 +71,21 @@ def merge(intervals: Iterable[Interval]):
     return reduce(merge_inner, sorted_intervals[1:], sorted_intervals[:1])
 
 
-def get_combined_coverage_at(row: int, *_, devices: set[Device]) -> tuple[int, list[Interval]]:
+def get_combined_coverage_at(row: int, *_, devices: set[Device]) -> list[Interval]:
     device_coverage = list(filter(None, map(lambda device: device.coverage(row), devices)))
     combined_coverage = merge(device_coverage)
-    return row, combined_coverage
+    return combined_coverage
+
+
+def find_distress_beacon_at(row: int, *_, devices: set[Device], search_area_size: int) -> Optional[Vector]:
+    coverage = get_combined_coverage_at(row, devices=devices)
+    possible_positions = flatten(starmap(lambda i1, i2: list(range(i1.end, i2.start)), pairwise(coverage)))
+    distress_beacon_col = first(possible_positions, pred=lambda col: 0 <= col <= search_area_size)
+
+    if not distress_beacon_col:
+        return None
+
+    return Vector(distress_beacon_col, row)
 
 
 @Calendar.register(day=15)
@@ -117,7 +128,7 @@ class Solution:
 
     def part1(self):
         row = 2000000
-        row, combined_coverage = get_combined_coverage_at(row, devices=self.devices)
+        combined_coverage = get_combined_coverage_at(row, devices=self.devices)
 
         devices_at_row = list(filter(lambda device: device.position.y == row, self.devices))
         covered_cells = sum(map(lambda interval: interval.length, combined_coverage))
@@ -127,19 +138,14 @@ class Solution:
         tuning_multiplier = 4000000
         search_area_size = 4000000
 
-        coverage_checker = partial(get_combined_coverage_at, devices=self.devices)
+        beacon_finder = partial(find_distress_beacon_at, devices=self.devices, search_area_size=search_area_size)
 
         with ProcessPoolExecutor() as pool:
-            for row, coverage in pool.map(coverage_checker, range(search_area_size), chunksize=10000):
-                if len(coverage) == 1:
+            for distress_beacon_position in pool.map(beacon_finder, range(search_area_size), chunksize=10000):
+                if not distress_beacon_position:
                     continue
 
-                distress_beacon_col = first(
-                    map(lambda interval: interval.end, coverage),
-                    lambda col: 0 <= col <= search_area_size
-                )
-
-                tuning_frequency = tuning_multiplier * distress_beacon_col + row
+                tuning_frequency = tuning_multiplier * distress_beacon_position.x + distress_beacon_position.y
                 return tuning_frequency
 
         return "Not found"

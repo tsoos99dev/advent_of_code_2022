@@ -76,24 +76,6 @@ def get_combined_coverage_at(row: int, *_, devices: set[Device]) -> tuple[int, l
     return row, combined_coverage
 
 
-def check_distress_beacon_at(device_positions: list[Vector], sensors: list[Sensor], search_area_size: int, row: int):
-    search_row = set(range(search_area_size))
-
-    devices_at_row = set(map(
-        lambda position: position.x,
-        filter(lambda position: position.y == row, device_positions)
-    ))
-    sensor_coverage = set(flatten(map(lambda sensor: sensor.coverage(row), sensors)))
-    possible_distress_beacon_positions = search_row - sensor_coverage.union(devices_at_row)
-
-    if not possible_distress_beacon_positions:
-        return None
-
-    col = possible_distress_beacon_positions.pop()
-    tuning_frequency = col * 4000000 + row
-    return tuning_frequency
-
-
 @Calendar.register(day=15)
 @dataclass
 class Solution:

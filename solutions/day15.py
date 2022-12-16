@@ -114,8 +114,6 @@ class Solution:
         position_pairs = list(map(parse_positions, self.puzzle_input.strip().splitlines()))
         self.devices = set(flatten(starmap(create_devices, position_pairs)))
 
-        # return sum(map(lambda interval: interval.length, combined_coverage)) - len(device_positions)
-
     def part1(self):
         row = 2000000
         row, combined_coverage = get_combined_coverage_at(row=row, devices=self.devices)

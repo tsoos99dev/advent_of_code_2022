@@ -12,12 +12,13 @@ from mathx import Vector
 
 @dataclass
 class Interval:
+    """Half open interval [start, end)"""
     start: int
     end: int
 
     @property
     def length(self) -> int:
-        return self.end - self.start + 1
+        return self.end - self.start
 
 
 class Device(Protocol):
@@ -47,7 +48,7 @@ class Sensor:
         row_dist = int(abs(row - self.position.y))
         radius = max(0, self.beacon_distance - row_dist)
         start = int(self.position.x) - radius
-        end = int(self.position.x) + radius
+        end = int(self.position.x) + radius + 1
 
         if end == start:
             return None
@@ -60,7 +61,7 @@ def merge(intervals: Iterable[Interval]):
 
     def merge_inner(intervals: list[Interval], next_interval: Interval):
         previous_interval = intervals.pop()
-        if next_interval.start <= previous_interval.end + 1:
+        if next_interval.start <= previous_interval.end:
             intervals.append(Interval(previous_interval.start, max(previous_interval.end, next_interval.end)))
         else:
             intervals.extend([previous_interval, next_interval])
@@ -116,7 +117,7 @@ class Solution:
 
     def part1(self):
         row = 2000000
-        row, combined_coverage = get_combined_coverage_at(row=row, devices=self.devices)
+        row, combined_coverage = get_combined_coverage_at(row, devices=self.devices)
 
         devices_at_row = list(filter(lambda device: device.position.y == row, self.devices))
         covered_cells = sum(map(lambda interval: interval.length, combined_coverage))
@@ -134,7 +135,7 @@ class Solution:
                     continue
 
                 distress_beacon_col = first(
-                    map(lambda interval: interval.end + 1, coverage),
+                    map(lambda interval: interval.end, coverage),
                     lambda col: 0 <= col <= search_area_size
                 )
 

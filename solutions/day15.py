@@ -1,9 +1,8 @@
 import re
-import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from functools import partial, reduce
-from itertools import starmap, pairwise, groupby, chain, islice
+from itertools import starmap
 from typing import Iterable, Protocol, Optional
 
 from calendar.calendar import Calendar

@@ -2,11 +2,11 @@ import re
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from functools import partial, reduce
-from itertools import starmap
+from itertools import starmap, pairwise
 from typing import Iterable, Protocol, Optional
 
 from calendar.calendar import Calendar
-from itertoolsx import flatten
+from itertoolsx import flatten, first
 from mathx import Vector
 
 
@@ -133,8 +133,11 @@ class Solution:
                 if len(coverage) == 1:
                     continue
 
-                distress_beacon_position = Vector(coverage[0].end + 1, row)
-                tuning_frequency = tuning_multiplier * distress_beacon_position.x + distress_beacon_position.y
+                distress_beacon_col = first(
+                    map(lambda interval: interval.end + 1, coverage),
+                    lambda col: 0 <= col <= search_area_size
+                )
+                tuning_frequency = tuning_multiplier * distress_beacon_col + row
                 return tuning_frequency
 
         return "Not found"

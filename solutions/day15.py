@@ -137,6 +137,7 @@ class Solution:
                     map(lambda interval: interval.end + 1, coverage),
                     lambda col: 0 <= col <= search_area_size
                 )
+
                 tuning_frequency = tuning_multiplier * distress_beacon_col + row
                 return tuning_frequency
 

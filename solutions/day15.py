@@ -20,6 +20,18 @@ class Interval:
     def length(self) -> int:
         return self.end - self.start
 
+    def overlaps(self, other: 'Interval') -> bool:
+        return self.start < other.end or other.start < self.end
+
+    def __contains__(self, other) -> bool:
+        if isinstance(other, int):
+            return self.start <= other < self.end
+
+        return self.start <= other.start and other.end <= self.end
+
+    def __iter__(self):
+        return iter(range(self.start, self.end))
+
 
 class Device(Protocol):
     position: Vector
@@ -48,12 +60,12 @@ class Sensor:
         row_dist = int(abs(row - self.position.y))
         radius = max(0, self.beacon_distance - row_dist)
         start = int(self.position.x) - radius
-        end = int(self.position.x) + radius + 1
+        end = int(self.position.x) + radius
 
         if end == start:
             return None
 
-        return Interval(start, end)
+        return Interval(start, end + 1)
 
 
 def merge(intervals: Iterable[Interval]):
@@ -77,10 +89,10 @@ def get_combined_coverage_at(row: int, *_, devices: set[Device]) -> list[Interva
     return combined_coverage
 
 
-def find_distress_beacon_at(row: int, *_, devices: set[Device], search_area_size: int) -> Optional[Vector]:
+def find_distress_beacon_at(row: int, *_, devices: set[Device], search_interval: Interval) -> Optional[Vector]:
     coverage = get_combined_coverage_at(row, devices=devices)
-    possible_positions = flatten(starmap(lambda i1, i2: list(range(i1.end, i2.start)), pairwise(coverage)))
-    distress_beacon_col = first(possible_positions, pred=lambda col: 0 <= col <= search_area_size)
+    possible_cols = flatten(map(lambda interval: (interval.start - 1, interval.end), coverage))
+    distress_beacon_col = first(possible_cols, pred=lambda interval: interval in search_interval)
 
     if not distress_beacon_col:
         return None
@@ -136,12 +148,12 @@ class Solution:
 
     def part2(self):
         tuning_multiplier = 4000000
-        search_area_size = 4000000
+        search_interval = Interval(0, 4000001)
 
-        beacon_finder = partial(find_distress_beacon_at, devices=self.devices, search_area_size=search_area_size)
+        beacon_finder = partial(find_distress_beacon_at, devices=self.devices, search_interval=search_interval)
 
         with ProcessPoolExecutor() as pool:
-            for distress_beacon_position in pool.map(beacon_finder, range(search_area_size), chunksize=10000):
+            for distress_beacon_position in pool.map(beacon_finder, search_interval, chunksize=10000):
                 if not distress_beacon_position:
                     continue
 

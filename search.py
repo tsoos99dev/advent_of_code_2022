@@ -4,7 +4,7 @@ from asyncio import Protocol
 from collections import deque
 from dataclasses import dataclass, field
 from queue import PriorityQueue, Empty
-from typing import Iterable, TypeVar, Callable
+from typing import Iterable, TypeVar, Callable, Generic
 
 from itertoolsx import iter_except
 
@@ -19,6 +19,12 @@ class PathNotFoundError(Exception):
 
     def __str__(self):
         return f"No path exists between {self.start} and {self.end}"
+
+
+@dataclass
+class Path(Generic[Node]):
+    nodes: list[Node]
+    length: float
 
 
 @dataclass(order=True)
@@ -43,7 +49,7 @@ def a_star(
         neighbours: Callable[[Node], Iterable[Node]],
         heuristic: Callable[[Node], float],
         distance: Callable[[Node, Node], float]
-) -> list[Node]:
+) -> Path[Node]:
     open_set: PriorityQueue[ScoredNode] = PriorityQueue()
     open_set.put_nowait(ScoredNode(heuristic(start), start))
 
@@ -52,8 +58,9 @@ def a_star(
 
     for current_scored_node in iter_except(open_set.get_nowait, Empty):
         current_node = current_scored_node.node
-        if current_node is goal:
-            return reconstruct_path(came_from, current_node)
+        if current_node == goal:
+            nodes = reconstruct_path(came_from, current_node)
+            return Path(nodes, g_score.get(current_node))
 
         for neighbour in neighbours(current_node):
             tentative_g_score = g_score.get(current_node, math.inf) + distance(current_node, neighbour)

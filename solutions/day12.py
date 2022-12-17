@@ -66,7 +66,7 @@ class Solution:
 
     def part1(self):
         path = a_star(self.start_node, self.goal_node, self.get_neighbours, self.tile_heuristic, lambda t1, t2: 1)
-        return len(path)
+        return path.length
 
     def part2(self):
         all_paths = []
@@ -79,4 +79,4 @@ class Solution:
 
             all_paths.append(path)
 
-        return min(len(path) for path in all_paths)
+        return min(path.length for path in all_paths)

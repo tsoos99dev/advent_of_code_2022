@@ -152,3 +152,8 @@ def nth(iterable, n, default=None):
 def take(n, iterable):
     "Return first n items of the iterable as a list"
     return list(islice(iterable, n))
+
+
+def quantify(iterable, pred=bool):
+    "Count how many times the predicate is true"
+    return sum(map(pred, iterable))

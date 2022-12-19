@@ -142,3 +142,13 @@ def repeatfunc(func, times=None, *args):
     if times is None:
         return starmap(func, repeat(args))
     return starmap(func, repeat(args, times))
+
+
+def nth(iterable, n, default=None):
+    "Returns the nth item or a default value"
+    return next(islice(iterable, n, None), default)
+
+
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))

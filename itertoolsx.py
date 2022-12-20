@@ -1,4 +1,5 @@
 import collections
+import operator
 from itertools import islice, takewhile, groupby, pairwise, chain, repeat, starmap
 from typing import TypeVar, Callable, Iterable, Type
 
@@ -157,3 +158,7 @@ def take(n, iterable):
 def quantify(iterable, pred=bool):
     "Count how many times the predicate is true"
     return sum(map(pred, iterable))
+
+
+def dotproduct(vec1, vec2):
+    return sum(map(operator.mul, vec1, vec2))

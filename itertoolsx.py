@@ -1,9 +1,10 @@
 import collections
 import operator
 from itertools import islice, takewhile, groupby, pairwise, chain, repeat, starmap
-from typing import TypeVar, Callable, Iterable, Type
+from typing import TypeVar, Callable, Iterable, Type, Any, Optional
 
 _T = TypeVar('_T')
+_VT = TypeVar('_VT')
 
 
 def batched(iterable, n):
@@ -18,7 +19,7 @@ def batched(iterable, n):
         yield batch
 
 
-def triplewise(iterable):
+def triplewise(iterable: Iterable[_T]) -> Iterable[tuple[_T, _T, _T]]:
     "Return overlapping triplets from an iterable"
     # triplewise('ABCDEFG') --> ABC BCD CDE DEF EFG
     for (a, _), (b, c) in pairwise(pairwise(iterable)):
@@ -145,12 +146,12 @@ def repeatfunc(func, times=None, *args):
     return starmap(func, repeat(args, times))
 
 
-def nth(iterable, n, default=None):
+def nth(iterable: Iterable[_T], n: int, default: _VT = None) -> _T | _VT | None:
     "Returns the nth item or a default value"
     return next(islice(iterable, n, None), default)
 
 
-def take(n, iterable):
+def take(n: int, iterable: Iterable[_T]) -> list[_T]:
     "Return first n items of the iterable as a list"
     return list(islice(iterable, n))
 

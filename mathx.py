@@ -40,14 +40,3 @@ class BoundingBox:
     def contains(self, point: Vector):
         return self.position.x <= point.x <= self.position.x + self.size.x \
                and self.position.y <= point.y <= self.position.y + self.size.y
-
-
-def gcd(a, b):
-    if a == 0:
-        return b
-    # recursively calculating the gcd.
-    return gcd(b % a, a)
-
-
-def lcm(a, b):
-    return (a // gcd(a, b)) * b
